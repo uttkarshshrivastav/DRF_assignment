@@ -10,11 +10,12 @@ from django.db import models
 
 class Users(models.Model):
     id = models.BigAutoField(primary_key=True)
-    company_role = models.TextField()  # This field type is a guess.
-    name = models.CharField(unique=True, max_length=100)
+    username = models.CharField(unique=True, max_length=150)
     alias = models.CharField(unique=True, max_length=50)
     email = models.CharField(unique=True, max_length=255)
     password = models.CharField(max_length=255)
+    is_admin = models.BooleanField()
+    created_at = models.DateTimeField()
 
     class Meta:
         managed = False
