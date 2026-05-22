@@ -15,8 +15,8 @@ class Users(models.Model):
     email = models.CharField(unique=True, max_length=255)
     password = models.CharField(max_length=255)
     is_admin = models.BooleanField()
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'users'
