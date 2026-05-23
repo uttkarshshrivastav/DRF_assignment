@@ -7,11 +7,11 @@ from .views import (
 )
 
 router = routers.DefaultRouter()
-router.register(r"projectsview", ProjectViewSet)
+router.register(r"projectsview", ProjectViewSet) ## Remove later
 
 urlpatterns = [
     path('projects/', ProjectView.as_view()),
     # path('projviewset/', ProjectViewSet.as_view()),
-    path("", include(router.urls)),
+    path("", include(router.urls)), 
 
 ]

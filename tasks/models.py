@@ -27,3 +27,9 @@ class Task(models.Model):
     
     tags = models.JSONField(default=list, blank=True)
     attachments = models.JSONField(default=list, blank=True)
+
+'''
+For version history, we simply append the attachments every time a new version is added
+And versions simply v1,v2,...
+Or attachments can be a json too, [{"v1":data, "v1.1":data2}]
+'''

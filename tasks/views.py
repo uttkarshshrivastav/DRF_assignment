@@ -40,7 +40,7 @@ class TaskView(APIView):
         )
 
     def get(self, request):
-        project = Project.objects.get(id=request.project_id)
+        project = Project.objects.get(id=request.data.get("project_id"))
         print(project.tasks())
         tasks = Task.objects.filter(project=project)
         serializer = TaskSerializer(tasks, many=True)

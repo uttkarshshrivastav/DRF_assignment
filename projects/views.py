@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from management_app.authentication import JWTAuthentication
 # from rest_framework
-
+## Add try cathc to all
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -48,9 +48,10 @@ class ProjectView(APIView):
 
 
     def delete(self, request):
-        project = ProjectSerializer(data=request.data)
-        if not project.is_valid():
-            return Response(project.errors, status=status.HTTP_400_BAD_REQUEST)
+        # project = ProjectSerializer(data=request.data)
+        # if not project.is_valid():
+        #     return Response(project.errors, status=status.HTTP_400_BAD_REQUEST)
+        project = Project.objects.get(id=request.data.get("project_id"))
 
         # creator = project.created_by
         user = request.user
@@ -62,3 +63,23 @@ class ProjectView(APIView):
             return Response({"success":True, "message":"Project Deleted"}, status=status.HTTP_200_OK)
         else:
             return Response({"success":False, "message":"Permission Denied"}, status=status.HTTP_403_FORBIDDEN)
+
+    def update(self, request):
+        try:
+            project = Project.objects.get(id=request.data.get("project_id"))        
+            
+            user = request.user
+            role = project.get_projectmembership.get(user=user).role
+            if role == ProjectMembership.Roles.PROJECT_LEAD:
+                new_stage = request.data.get("new_stage") # small
+
+                project.stage = Project.Stage(new_stage)
+                project.save()
+                print("Saved Successfully-", project)
+                return Response({"success":True, "message":"Project Stage Updated"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"success":False, "message":"Permission Denied"}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            print(e)
+            return Response({"success":False, "message":"Permission Denied"}, status=status.HTTP_403_FORBIDDEN)
+
