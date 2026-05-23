@@ -20,7 +20,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         ProjectMembership.objects.create(project=project, user=self.request.user, role=ProjectMembership.Roles.PROJECT_LEAD)
 
-class CreateProjectView(APIView):
+class ProjectView(APIView):
+    authentication_classes=[JWTAuthentication]
+    permission_classes=[IsAuthenticated]
+
     def post(self, request):
         serializer = ProjectSerializer(data=request.data)
 
@@ -28,7 +31,7 @@ class CreateProjectView(APIView):
             serializer.save()
             return Response({
                     "success": True,
-                    "message": "User registered"
+                    "message": "Project Created"
                 },
                 status=status.HTTP_201_CREATED)
         
@@ -36,13 +39,26 @@ class CreateProjectView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-
-class GetProjectsView(APIView):
-    authentication_classes=[JWTAuthentication]
-    permission_classes=[IsAuthenticated]
-
+    
     def get(self, request):
         projects = Project.objects.all()
         serializer = ProjectSerializer(projects, many=True)
         
-        return Response(serializer.data, status=200)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def delete(self, request):
+        project = ProjectSerializer(data=request.data)
+        if not project.is_valid():
+            return Response(project.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # creator = project.created_by
+        user = request.user
+        role = project.get_projectmembership.get(user=user).role
+        if role == ProjectMembership.Roles.STUDIO_ADMIN or role == ProjectMembership.Roles.PROJECT_LEAD:
+            # delete
+            Project.objects.get(id=project.id).delete()
+            print("Deleted: ", project.id, project.name)
+            return Response({"success":True, "message":"Project Deleted"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"success":False, "message":"Permission Denied"}, status=status.HTTP_403_FORBIDDEN)
