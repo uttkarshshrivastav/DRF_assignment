@@ -39,6 +39,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +48,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'management_app',
+    'chat',
+    'notifications',
+    'stage_comments',
 ]
 
 MIDDLEWARE = [
@@ -77,6 +81,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+REDIS_ENV_URL = config('REDIS_URL', default='redis://127.0.0.1:6379/0')
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [REDIS_ENV_URL],
+        },
+    },
+}
 
 
 # Database
