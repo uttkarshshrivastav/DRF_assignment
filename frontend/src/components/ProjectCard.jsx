@@ -1,4 +1,3 @@
-import React from 'react';
 
 export default function ProjectCard({ project, progress, isSelected, onSelect }) {
   const stageColors = {
@@ -10,14 +9,6 @@ export default function ProjectCard({ project, progress, isSelected, onSelect })
     archived: 'badge-ghost',
   };
 
-  const stageEmojis = {
-    draft: '📝',
-    review: '👀',
-    revision: '✏️',
-    approved: '✅',
-    completed: '🎉',
-    archived: '📦',
-  };
 
   return (
     <div

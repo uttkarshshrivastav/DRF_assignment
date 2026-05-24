@@ -30,7 +30,7 @@ export default function Layout({ children }) {
             </div>
             <ul
               tabIndex={0}
-              className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+              className="dropdown-content z-1 menu p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
                 <a className="justify-between">
@@ -46,7 +46,7 @@ export default function Layout({ children }) {
         </div>
       </div>
 
-      <main className="flex-grow">{children}</main>
+      <main className="grow">{children}</main>
     </div>
   );
 }

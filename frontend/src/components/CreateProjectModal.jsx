@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import client from '../api/client';
 
 export default function CreateProjectModal({ onClose, onProjectCreated }) {
