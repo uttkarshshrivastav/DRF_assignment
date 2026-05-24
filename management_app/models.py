@@ -34,6 +34,10 @@ class Users(models.Model):
         default=False
     )
 
+    is_authenticated = models.BooleanField(
+        default=True
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )

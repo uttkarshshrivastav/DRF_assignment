@@ -32,15 +32,15 @@ class CreateProjectView(APIView):
 
         user = request.user
 
-        if not user.is_admin:
+        # if not user.is_admin:
 
-            return Response(
-                {
-                    "success": False,
-                    "message": "Only admins can create projects"
-                },
-                status=403
-            )
+        #     return Response(
+        #         {
+        #             "success": False,
+        #             "message": "Only admins can create projects"
+        #         },
+        #         status=403
+        #     )
 
         title = request.data.get(
             'title'
