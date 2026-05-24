@@ -227,7 +227,7 @@ class DeleteProjectView(APIView):
         )
         
         
-class AddMemberToProject (APIView):
+class AddMemberToProjectView(APIView):
     authentication_classes = [
         JWTAuthentication
     ]
