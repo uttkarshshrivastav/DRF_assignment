@@ -17,13 +17,13 @@ from rest_framework.permissions import (
     IsAuthenticated
 )
 
-from .models import Users
+from ..models import Users
 
-from .serializers import (
+from ..serializers import (
     RegisterSerializer
 )
 
-from .authentication import (
+from ..authentication import (
     JWTAuthentication
 )
 

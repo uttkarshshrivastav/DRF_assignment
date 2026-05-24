@@ -35,6 +35,7 @@ htmlcov/
 
 # Migrations cache
 *.pyc
+Migrations/
 
 # mypy
 .mypy_cache/
