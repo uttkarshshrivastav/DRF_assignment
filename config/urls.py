@@ -28,6 +28,5 @@ urlpatterns = [
         'api/',
         include('management_app.urls')
     ),
-    path('api/', include('projects.urls'))
 ]
 
