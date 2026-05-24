@@ -11,7 +11,8 @@ from .views.project_views import (
     GetAllProjectsView,
     GetSingleProjectView,
     DeleteProjectView,
-    AddMemberToProjectView
+    AddMemberToProjectView,
+    GetAllMembersView
 )
 
 urlpatterns = [
@@ -55,4 +56,8 @@ urlpatterns = [
         'add_member_to_project/',
         AddMemberToProjectView.as_view()
     ),
+        path(
+        'get_all_members/',
+        GetAllMembersView.as_view()    
+        )
 ]
