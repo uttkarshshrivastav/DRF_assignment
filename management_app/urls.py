@@ -14,16 +14,15 @@ from .views.project_views import (
     DeleteProjectView,
     AddMemberToProjectView,
     GetAllMembersView,
-    UpdateProjectStageView
+    UpdateProjectStageView,
+    GetVersionHistoryView,
+    ImageSaveView,
+    GetCompletedImageView
 )
 from .views.task_views import (
     CreateTaskView,
     GetTasksView,
-    SetTaskCompletedView,
-    GetVersionHistoryView,
-    ImageSaveView,
-    GetCompletedImageView
-    
+    SetTaskCompletedView,   
 )
 
 urlpatterns = [

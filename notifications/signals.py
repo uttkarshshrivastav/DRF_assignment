@@ -8,19 +8,20 @@ from management_app.models import Tasks, Notifications
 def instant_task_assignment_notification(sender, instance, created, **kwargs):
     if created and instance.allotted_to:
         notif = Notifications.objects.create(
-            user=instance.allotted_to,
+            task=instance,
+            delivered_to=instance.allotted_to,
             title="task_allocated",
-            message=f"You have been assigned to the task: {instance.title}"
+            content=f"You have been assigned to the task: {instance.title}"
         )
         
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f'notifications_{instance.assigned_to.id}',
+            f'notifications_{instance.allotted_to.id}',
             {
                 'type': 'send_notification',
                 'id': notif.id,
                 'title': notif.title,
-                'message': notif.message,
+                'message': notif.content,
                 'created_at': notif.created_at.isoformat()
             }
         )
