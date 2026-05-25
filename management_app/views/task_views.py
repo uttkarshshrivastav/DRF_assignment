@@ -138,6 +138,7 @@ class GetTasksView(APIView):
                 "priority":task.PRIORITY,
                 "is_completed":task.is_completed,
                 "created_at":task.created_at,
+                "completed_at":task.completed_at
                 # "tags":task.tags
             
             })
@@ -155,7 +156,7 @@ class GetTasksView(APIView):
             },
             status=200
         )
-
+from django.utils import timezone
 class SetTaskCompletedView(APIView):
     authentication_classes = [
         JWTAuthentication
@@ -169,8 +170,10 @@ class SetTaskCompletedView(APIView):
         task = Tasks.objects.get(id=task_id)
         user = request.user
         
-        if task.allotted_by.id == user.id:
+        if task.allotted_by.id == user.id or user.is_admin:
             task.is_completed = True
+            task.completed_at = timezone.now()
+            task.save()
             return Response(
                 {
                     "success": True,

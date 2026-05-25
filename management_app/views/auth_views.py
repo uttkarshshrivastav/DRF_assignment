@@ -168,7 +168,7 @@ class MakeAdminView(APIView):
     def post(self, request):
 
         entered_code = request.data.get(
-            'admin_code'
+            'key'
         )
 
         if entered_code != ADMIN_CODE:
@@ -189,8 +189,52 @@ class MakeAdminView(APIView):
 
         return Response({
             "success": True,
-            "message": "Admin access granted"
+            "is_admin": "Admin access granted"
         })
 
+class GetAllUsersView(APIView):
+    
+    authentication_classes = [
+        JWTAuthentication
+    ]
+
+    permission_classes = [
+        IsAuthenticated
+    ]
+    
+    def get(self,request):
+        user = Users.objects.get(id=request.user.id)
+        if not user.is_admin:
+            return Response(
+                {
+                    "success": False,
+                    "message": "only admin can add members in the project"
+                },
+                status=403
+            ) 
+        
+        users_all=[]
+        try:
+            users = Users.objects.all()
+        except Users.DoesNotExist:
+            return Response(
+                {
+                    "success":False,
+                    "message":"no users "
+                }
+            )
+        
+        for u in users:
+            users_all.append({
+                "id": u.id,
+                "username":u.username,
+            })
+        return Response(
+            {
+                "success":True,
+                "users":users_all
+            },
+            status=200
+        )
 
 # Create your views here.

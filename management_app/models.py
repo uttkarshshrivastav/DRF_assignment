@@ -134,7 +134,7 @@ class Members(models.Model):
         managed = True
         db_table = 'members'
 
-        unique_together = ('project', 'user', 'role')
+        unique_together = ('project', 'user')
 
     def __str__(self):
         return f"{self.user.username} - {self.role}"
@@ -186,6 +186,16 @@ class Tasks(models.Model):
     is_completed = models.BooleanField(
         default=False
     )
+    
+    completed_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+  
+    completion_image = models.BinaryField(
+        null=True,
+        blank=True
+    )
 
     created_at = models.DateTimeField(
         auto_now_add=True
@@ -202,7 +212,7 @@ class Tasks(models.Model):
         managed = True
         db_table = 'tasks'
 
-    def __str__(self):
+    def _str_(self):
         return self.title
 
 

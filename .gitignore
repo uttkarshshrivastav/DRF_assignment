@@ -56,3 +56,4 @@ tmp/
 *.md
 !/README.md
 *.zip
+.vite

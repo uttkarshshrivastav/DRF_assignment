@@ -8,6 +8,8 @@ import TaskList from '../components/TaskList';
 import CreateTaskModal from '../components/CreateTaskModal';
 import { useNavigate } from 'react-router-dom';
 import TaskDetailModal from '../components/TaskDetailModal';
+import ProjectAdminPanel from '../components/ProjectAdminPanel';
+import VersionHistory from '../components/VersionHistory';
 
 export default function Dashboard() {
   const { user, isAuthenticated } = useAuth();
@@ -20,6 +22,10 @@ export default function Dashboard() {
   const [error, setError] = useState('');
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false)
+  const [showVersionHis, setShowVersionHis] = useState(false)
+  const [users, setUsers] = useState([]);
+  const [currProjMembers, setCurrProjMembers] = useState([])
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -31,6 +37,22 @@ export default function Dashboard() {
     fetchProjects();
   }, []);
 
+  useEffect(()=>{
+    const get_users = async ()=>{
+      try {
+        const response = await client.get('/get_all_users/');
+
+        console.log(response.data.users)
+        setUsers(response.data.users)
+  
+      } catch (err) {
+        console.error('Failed to fetch tasks:', err);
+        return null
+      }
+    }
+    get_users()
+  }, [])
+
   useEffect(() => {
     if (selectedProject) {
       fetchTasks(selectedProject.id);
@@ -39,8 +61,10 @@ export default function Dashboard() {
 
   const toggleSelectedProject = (project) => {
     if (selectedProject === project) {
+      setCurrProjMembers([])
       setSelectedProject(null)
     } else {
+      fetchMembers(project.id, setCurrProjMembers)
       setSelectedProject(project)
     }
   }
@@ -69,12 +93,16 @@ export default function Dashboard() {
   };
 
   const calculateProgress = (project) => {
-    if (!project.tasks || project.tasks.length === 0) return 0;
-    const totalTasks = project.tasks.length;
-    const completedTasks = project.tasks.filter(
-      (t) => t.stage === 'DONE'
-    ).length;
-    return Math.round((completedTasks / totalTasks) * 100);
+    const stageWeights = {
+      'initialized': 0,
+      'draft': 20,
+      'review': 40,
+      'revision': 60,
+      'approved': 80,
+      'completed': 100
+    };
+
+    return stageWeights[project.stage]
   };
 
   const fetchTasks = async (projectId) => {
@@ -100,6 +128,29 @@ export default function Dashboard() {
     setShowTaskModal(false);
   };
 
+  const fetchMembers = async (projectId, setfn) => {
+    try {
+      const response = await client.get('/get_all_members/', {
+        params: { project_id: projectId },
+      });
+
+      console.log("Members", projectId, response.data.members)
+      setfn(response.data.members)
+      
+
+    } catch (err) {
+      console.error('Failed to fetch tasks:', err);
+      return null
+    }
+  }
+
+  const addMemb = (member) => {
+    setCurrProjMembers([...currProjMembers, member])
+  }
+
+  // const editProjStage = (project) => {
+  //   set
+  // }
 
 
   return (
@@ -121,7 +172,7 @@ export default function Dashboard() {
         )}
         <div className="mx-auto p-8 flex flex-row justify-content gap-10">
 
-          <div className="mx-auto p-8 flex flex-row justify-content gap-10">
+          <div className="mx-auto p-8 flex flex-row justify-content gap-10 w-screen">
             <div className="mb-12 flex-1">
               <div className="flex justify-between items-center mb-6">
                 <div>
@@ -172,6 +223,7 @@ export default function Dashboard() {
                       progress={calculateProgress(project)}
                       isSelected={selectedProject?.id === project.id}
                       onSelect={toggleSelectedProject}
+                      fetchMembers={fetchMembers}
                     />
                   ))}
                 </div>
@@ -192,25 +244,44 @@ export default function Dashboard() {
                       <p className="text-gray-600 mt-1">
                         {tasks.length} task{tasks.length !== 1 ? 's' : ''} in this project
                       </p>
+                      <p className="text-gray-600 mt-1">
+                        {currProjMembers.length} member{currProjMembers.length !== 1 ? 's' : ''} : {currProjMembers.map(memb => memb.user).join(', ')}
+                      </p>
                     </div>
-                    <button
-                      onClick={() => setShowTaskModal(true)}
-                      className="btn gap-2"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="w-5 h-5"
+                    <div>
+                      <button
+                        onClick={() => setShowVersionHis(true)}
+                        className="btn gap-2 mr-5"
                       >
-                        <path
-                          fillRule="evenodd"
-                          d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      New Task
-                    </button>
+                        Version History
+                      </button> 
+                      {user.is_admin &&(
+                        <button
+                        onClick={() => setShowAdminPanel(true)}
+                        className="btn gap-2 mr-5"
+                      >
+                        Admin Panel
+                      </button>  
+                      )}
+                      <button
+                        onClick={() => setShowTaskModal(true)}
+                        className="btn gap-2"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="w-5 h-5"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        New Task
+                      </button>
+                    </div>
                   </div>
 
                   {tasks.length === 0 ? (
@@ -242,7 +313,7 @@ export default function Dashboard() {
             {selectedTask && (
               <TaskDetailModal
                 task={selectedTask}
-                onClose={()=>{setSelectedTask(null)}}
+                onClose={() => { setSelectedTask(null) }}
               />
             )}
           </div>
@@ -260,6 +331,25 @@ export default function Dashboard() {
               projectId={selectedProject?.id}
               onClose={() => setShowTaskModal(false)}
               onTaskCreated={handleTaskCreated}
+              fetchMembers={fetchMembers}
+            />
+          )}
+
+          {showAdminPanel && (
+            <ProjectAdminPanel
+              project={selectedProject}
+              onClose={() => setShowAdminPanel(false)}
+              users={users}
+              addMemb={addMemb}
+              refresh={fetchProjects}
+            />
+          )}
+          
+          {showVersionHis && (
+            <VersionHistory
+              project={selectedProject}
+              onClose={() => setShowVersionHis(false)}
+              tasks={tasks}
             />
           )}
 

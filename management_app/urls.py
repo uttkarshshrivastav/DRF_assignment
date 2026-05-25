@@ -4,7 +4,8 @@ from .views.auth_views import (
     RegisterView,
     LoginView,
     ProfileView,
-    MakeAdminView
+    MakeAdminView,
+    GetAllUsersView
 )
 from .views.project_views import (
     CreateProjectView,
@@ -13,6 +14,7 @@ from .views.project_views import (
     DeleteProjectView,
     AddMemberToProjectView,
     GetAllMembersView,
+    UpdateProjectStageView
 )
 from .views.task_views import (
     CreateTaskView,
@@ -76,5 +78,13 @@ urlpatterns = [
         path(
         'get_tasks/',
         GetTasksView.as_view()
+    ),
+        path(
+        'get_all_users/',
+        GetAllUsersView.as_view()
+    ),
+        path(
+        'update_project_stage/',
+        UpdateProjectStageView.as_view()
     ),
 ]

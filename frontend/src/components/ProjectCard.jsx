@@ -1,6 +1,15 @@
+import { useEffect, useState } from "react";
 
-export default function ProjectCard({ project, progress, isSelected, onSelect }) {
+export default function ProjectCard({ project, progress, isSelected, onSelect, fetchMembers }) {
+  const [members, setMembers] = useState([])
 
+  useEffect(()=>{
+    const loadMembers = ()=>{
+      fetchMembers(project.id, setMembers)
+      // console.log("HAHAHAH", members)
+    }
+    loadMembers()
+  }, [project.id])
 
   return (
     <div
@@ -21,7 +30,7 @@ export default function ProjectCard({ project, progress, isSelected, onSelect })
         </p>
 
         <div className="flex items-center justify-between mb-4">
-          <div className='badge-default'>
+          <div className='px-2 py-0.5 text-xs font-semibold rounded bg-gray-50 text-gray-700 border border-gray-200'>
             {project.stage.toUpperCase()}
           </div>
           <span className="text-xs text-gray-700">
@@ -42,40 +51,9 @@ export default function ProjectCard({ project, progress, isSelected, onSelect })
           ></progress>
         </div>
 
-        {/* Stage breakdown */}
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="grid grid-cols-4 gap-2 text-center text-xs">
-            <div className="p-2 bg-gray-50 rounded">
-              <div className="font-bold text-gray-600">
-                {project.tasks?.filter((t) => t.stage === 'TODO').length || 0}
-              </div>
-              <div className="text-gray-600">To Do</div>
-            </div>
-            <div className="p-2 bg-gray-50 rounded">
-              <div className="font-bold text-gray-600 text-center">
-                {project.tasks?.filter((t) => t.stage === 'IN_PROGRESS').length || 0}
-              </div>
-              <div className="text-gray-600">In Progress</div>
-            </div>
-            <div className="p-2 bg-gray-50 rounded">
-              <div className="font-bold text-gray-600">
-                {project.tasks?.filter((t) => t.stage === 'REVIEW').length || 0}
-              </div>
-              <div className="text-gray-600">Review</div>
-            </div>
-            <div className="p-2 bg-gray-50 rounded">
-              <div className="font-bold text-gray-600">
-                {project.tasks?.filter((t) => t.stage === 'DONE').length || 0}
-              </div>
-              <div className="text-gray-600">Done</div>
-            </div>
-          </div>
-        </div>
-
-        {/*Members*/}
         <div className=''>
           <span className="text-xs text-gray-700">
-            {project.members?.length || 0} Members
+            {members?.length || 0} Members
           </span>
         </div>
 

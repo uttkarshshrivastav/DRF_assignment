@@ -1,0 +1,10 @@
+Django
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+channels
+daphne
+celery
+redis
+python-decouple
+dj-database-url
