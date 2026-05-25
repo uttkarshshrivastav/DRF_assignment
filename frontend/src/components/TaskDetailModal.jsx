@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import client from '../api/client';
 
 export default function TaskDetailModal({ task, onClose }) {
@@ -6,6 +6,31 @@ export default function TaskDetailModal({ task, onClose }) {
   const [newComment, setNewComment] = useState('');
   // const [versions, setVersions] = useState(task.versions || []);
   const [loadingComment, setLoadingComment] = useState(false);
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    if (!task.id) return;
+
+    const token = localStorage.getItem('authToken');
+    const ws = new WebSocket(`ws://localhost:8000/ws/tasks/${task.id}/comments/?token=${token}`);
+    setSocket(ws);
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const incomingComment = {
+        author: {
+          username: data.alias || data.username
+        },
+        text: data.content,
+        created_at: new Date().toISOString()
+      };
+      setComments((prev) => [...prev, incomingComment]);
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [task.id]);
 
   const isOverdue =
     task.deadline &&
@@ -16,18 +41,9 @@ export default function TaskDetailModal({ task, onClose }) {
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    setLoadingComment(true);
-    try {
-      const response = await client.post('/tasks/comment/', {
-        task_id: task.id,
-        text: newComment,
-      });
-      setComments([...comments, response.data.comment]);
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ content: newComment }));
       setNewComment('');
-    } catch (error) {
-      console.error('Failed to add comment:', error);
-    } finally {
-      setLoadingComment(false);
     }
   };
 
@@ -119,7 +135,7 @@ export default function TaskDetailModal({ task, onClose }) {
                     <div className="font-semibold text-xs text-gray-800">
                       {comment.author?.username || 'Unknown'}
                     </div>
-                    <p className="text-xs text-gray-600 mt-1">{comment.text}</p>
+                    <p className="text-xs text-gray-600 mt-1">{comment.text || comment.content}</p>
                     <div className="text-xs text-gray-400 mt-1">
                       {new Date(comment.created_at).toLocaleString()}
                     </div>
@@ -143,14 +159,11 @@ export default function TaskDetailModal({ task, onClose }) {
                 className="w-full py-1.5 text-xs font-medium bg-gray-800 hover:bg-gray-900 text-white rounded transition-colors disabled:opacity-50"
                 disabled={loadingComment || !newComment.trim()}
               >
-                {loadingComment ? 'Posting...' : 'Post Comment'}
+                Post Comment
               </button>
             </form>
           </div>
         </div>
-
-        
-        
       </div>
     </div>
   );
