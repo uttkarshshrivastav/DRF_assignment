@@ -134,7 +134,7 @@ class Members(models.Model):
         managed = True
         db_table = 'members'
 
-        unique_together = ('project', 'user', 'role')
+        unique_together = ('project', 'user')
 
     def __str__(self):
         return f"{self.user.username} - {self.role}"

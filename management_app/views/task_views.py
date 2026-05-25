@@ -169,8 +169,9 @@ class SetTaskCompletedView(APIView):
         task = Tasks.objects.get(id=task_id)
         user = request.user
         
-        if task.allotted_by.id == user.id:
+        if task.allotted_by.id == user.id or user.is_admin:
             task.is_completed = True
+            task.save()
             return Response(
                 {
                     "success": True,

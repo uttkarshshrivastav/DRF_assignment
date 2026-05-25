@@ -34,7 +34,7 @@ export default function CreateProjectModal({ onClose, onProjectCreated }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="w-full max-w-md bg-white rounded-xl p-6 shadow-xl transform transition-all">
-        <h3 className="font-bold text-lg mb-4 text-gray-900">Create New Project 🎨</h3>
+        <h3 className="font-bold text-lg mb-4 text-gray-900">Create New Project</h3>
 
         {error && (
           <div className="bg-red-50 text-red-700 border border-red-200 p-3 rounded-lg mb-4 text-sm" role="alert">
@@ -78,6 +78,7 @@ export default function CreateProjectModal({ onClose, onProjectCreated }) {
               value={formData.stage}
               onChange={handleChange}
             >
+              <option value="initialized">Initialized</option>
               <option value="draft">Draft</option>
               <option value="review">Review </option>
               <option value="revision">Revision </option>
@@ -98,7 +99,7 @@ export default function CreateProjectModal({ onClose, onProjectCreated }) {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50"
               disabled={loading}
             >
               {loading ? 'Creating...' : 'Create Project'}

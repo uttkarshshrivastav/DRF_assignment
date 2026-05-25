@@ -6,6 +6,7 @@ export default function TaskDetailModal({ task, onClose }) {
   const [newComment, setNewComment] = useState('');
   // const [versions, setVersions] = useState(task.versions || []);
   const [loadingComment, setLoadingComment] = useState(false);
+  const [is_completed, setComplete] = useState(task.is_completed);
 
   const isOverdue =
     task.deadline &&
@@ -31,6 +32,18 @@ export default function TaskDetailModal({ task, onClose }) {
     }
   };
 
+  const completeTask = async () => {
+    try {
+      const response = await client.patch('/set_taskcompleted/', {
+        task_id: task.id,
+      });
+      console.log(response.data)
+      setComplete(true)
+    } catch (error) {
+      console.error('Failed to set complete:', error);
+    } 
+  }
+
   const priorityColors = {
     LOW: 'bg-green-50 text-green-700 border border-green-200',
     MEDIUM: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
@@ -47,6 +60,9 @@ export default function TaskDetailModal({ task, onClose }) {
               <div className={`px-2 py-0.5 text-xs font-semibold rounded ` + priorityColors[task.priority]}>
                 {task.priority}
               </div>
+              <div className="px-2 py-0.5 text-xs font-medium rounded border border-gray-300 text-gray-600">
+                  Alloted to: {task.alloted_to}
+                </div>
               {task.deadline && (
                 <div className="px-2 py-0.5 text-xs font-medium rounded border border-gray-300 text-gray-600">
                   Deadline: {new Date(task.deadline).toLocaleDateString()}
@@ -55,6 +71,11 @@ export default function TaskDetailModal({ task, onClose }) {
               {isOverdue && (
                 <div className="px-2 py-0.5 text-xs font-semibold rounded bg-red-50 text-red-700 border border-red-200">
                   OVERDUE
+                </div>
+              )}
+              {is_completed && (
+                <div className="px-2 py-0.5 text-xs font-semibold rounded bg-green-50 text-green-700 border border-green-200">
+                  COMPLETE
                 </div>
               )}
             </div>
@@ -107,6 +128,15 @@ export default function TaskDetailModal({ task, onClose }) {
                 )} */}
               </div>
             </div>
+            {!is_completed &&(
+              <div className='mt-10'>
+                <button className='btn bg-gray-300 hover:bg-gray-100 text-black' onClick={completeTask}>
+                  Complete
+                </button>
+
+              </div>
+
+            )}
           </div>
 
           <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm h-full flex flex-col">

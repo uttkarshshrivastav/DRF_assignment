@@ -28,6 +28,11 @@ export default function TaskCard({ task, isSelected, onSelect }) {
             OVERDUE
           </div>
         )}
+        {task.is_completed && (
+          <div className="px-2 py-0.5 text-xs font-semibold rounded bg-green-50 text-green-700 border border-green-200">
+            COMPLETE
+          </div>
+        )}
       </div>
 
       <div className="space-y-1">

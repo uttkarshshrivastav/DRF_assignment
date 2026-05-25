@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import client from '../api/client';
 import { useAuth } from '../context/AuthContext';
 
-export default function CreateTaskModal({ projectId, onClose, onTaskCreated }) {
-  const {user} = useAuth();
+export default function CreateTaskModal({ projectId, onClose, onTaskCreated, fetchMembers }) {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -14,6 +14,15 @@ export default function CreateTaskModal({ projectId, onClose, onTaskCreated }) {
     tags: '',
     alloted_id: user.id //// CHANGE THIS LATER
   });
+  const [members, setMembers] = useState([])
+
+  useEffect(() => {
+    const loadMembers = () => {
+      fetchMembers(projectId, setMembers)
+      // console.log("HAHAHAH", members)
+    }
+    loadMembers()
+  }, [projectId])
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,7 +45,7 @@ export default function CreateTaskModal({ projectId, onClose, onTaskCreated }) {
           .split(',')
           .map((tag) => tag.trim())
           .filter((tag) => tag),
-        alloted_id:formData.alloted_id,
+        alloted_id: formData.alloted_id,
       };
 
       const response = await client.post('/create_task/', taskData);
@@ -109,14 +118,17 @@ export default function CreateTaskModal({ projectId, onClose, onTaskCreated }) {
 
             {/* Members */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-gray-700">Members</label>
+              <label className="text-sm font-semibold text-gray-700">Assign To</label>
               <select
                 className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                name="stage"
-                // value={formData.stage}
-                // onChange={handleChange}
+                name="assignto"
+                value={formData.alloted_id}
+                onChange={handleChange}
               >
-                <option value="Member1">Soka</option>
+                {members.map((user) => {
+                  return (<option key={user.id} value={user.id}>{user.user}</option>)
+                }
+                )}
 
               </select>
             </div>
@@ -133,7 +145,7 @@ export default function CreateTaskModal({ projectId, onClose, onTaskCreated }) {
             />
           </div>
 
-          <div className="flex flex-col gap-1.5">
+          {/* <div className="flex flex-col gap-1.5">
             <label className="text-sm font-semibold text-gray-700">Tags (comma separated)</label>
             <input
               type="text"
@@ -143,7 +155,7 @@ export default function CreateTaskModal({ projectId, onClose, onTaskCreated }) {
               value={formData.tags}
               onChange={handleChange}
             />
-          </div>
+          </div> */}
 
           <div className="flex justify-end gap-3 pt-4">
             <button

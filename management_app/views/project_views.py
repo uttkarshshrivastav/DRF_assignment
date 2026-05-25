@@ -9,7 +9,8 @@ from rest_framework.permissions import (
 from ..models import (
     Users,
     Projects,
-    Members
+    Members,
+    Tasks
     
 )
 
@@ -32,15 +33,15 @@ class CreateProjectView(APIView):
 
         user = request.user
 
-        # if not user.is_admin:
+        if not user.is_admin:
 
-        #     return Response(
-        #         {
-        #             "success": False,
-        #             "message": "Only admins can create projects"
-        #         },
-        #         status=403
-        #     )
+            return Response(
+                {
+                    "success": False,
+                    "message": "Only admins can create projects"
+                },
+                status=403
+            )
 
         title = request.data.get(
             'title'
@@ -67,6 +68,12 @@ class CreateProjectView(APIView):
             title=title,
 
             description=description
+        )
+
+        member = Members.objects.create(
+            project=project,
+            user=user,
+            role='admin',
         )
 
         return Response(
@@ -176,7 +183,44 @@ class GetSingleProjectView(APIView):
         )
 
 
+class UpdateProjectStageView(APIView):
+    authentication_classes = [
+        JWTAuthentication
+    ]
 
+    permission_classes = [
+        IsAuthenticated
+    ]
+    def patch(self, request):
+        proj_id = request.data.get("project_id")
+        project = Projects.objects.get(id=proj_id)
+        user = Users.objects.get(id=request.user.id)
+        stage = request.data.get("stage")
+        if user.is_admin:
+            try:
+                project.stage = stage
+            except Exception:
+                return Response(
+                    {
+                        "success":False,
+                    },
+                    status=400
+                )
+                
+            project.save()
+            return Response(
+                {
+                    "success": True,
+                },
+                status=200
+            )
+        else:
+            return Response(
+            {
+                "success": False,
+            },
+            status=403
+        )
 
 class DeleteProjectView(APIView):
 
@@ -238,7 +282,7 @@ class AddMemberToProjectView(APIView):
         IsAuthenticated
     ]
     
-    def post (self,request,project_id):
+    def post (self,request):
         
         user=request.user 
         if not user.is_admin :
@@ -247,16 +291,16 @@ class AddMemberToProjectView(APIView):
                     "success": False,
                     "message": "only admin can add members in the project"
                 },
-                status=402
+                status=400
             ) 
-        
+        project_id = request.data.get('project_id')
         if not project_id :
             return Response(
                 {
                     "success":False,
                     "message":"project_id required to add members to the project"
                 },
-                status=403
+                status=400
             )
         username = request.data.get(
             'username'
@@ -283,7 +327,7 @@ class AddMemberToProjectView(APIView):
         try:
 
             member_user = Users.objects.get(
-                username=username
+                id=username
             )
 
         except Users.DoesNotExist:
@@ -291,7 +335,7 @@ class AddMemberToProjectView(APIView):
             return Response(
                 {
                     "success": False,
-                    "message": "User not found"
+                    "message": "User not found "+username
                 },
                 status=404
             )
@@ -331,11 +375,11 @@ class GetAllMembersView(APIView):
         IsAuthenticated
     ]
     
-    def get(self,request,project_id):
+    def get(self,request):
         
         try:
             project=Projects.objects.get(
-                id=project_id
+                id=request.query_params.get('project_id')
             )
         except Projects.DoesNotExist:
             return Response(
