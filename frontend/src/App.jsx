@@ -36,6 +36,24 @@ function App() {
           }
         />
 
+        <Route
+          path="/project/:projectId/chat"
+          element={
+            <ProtectedRoute>
+              <ProjectChat />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/" element={<Navigate to="/dashboard" />} />
 
         <Route
