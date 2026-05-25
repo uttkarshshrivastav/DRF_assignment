@@ -27,8 +27,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
+
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-m7n8w_nvw^3si7let*ot$6mwh^!+*hj75^$4*$i)8-mn1z&ase'
+# SECRET_KEY = 'django-insecure-m7n8w_nvw^3si7let*ot$6mwh^!+*hj75^$4*$i)8-mn1z&ase
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,6 +43,7 @@ CORS_ALLOWED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,6 +53,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'management_app',
+    'chat',
+    'notifications',
+    'stage_comments',
 ]
 
 MIDDLEWARE = [
@@ -81,6 +87,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+REDIS_ENV_URL = config('REDIS_URL', default='redis://127.0.0.1:6379/0')
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [REDIS_ENV_URL],
+        },
+    },
+}
 
 
 # Database
