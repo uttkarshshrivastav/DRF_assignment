@@ -4,7 +4,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from management_app.models import Tasks, Notifications
 
-@receiver(post_save, sender=Task)
+@receiver(post_save, sender=Tasks)
 def instant_task_assignment_notification(sender, instance, created, **kwargs):
     if created and instance.allotted_to:
         notif = Notifications.objects.create(

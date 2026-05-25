@@ -3,6 +3,8 @@ import { useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import ProjectChat from './pages/ProjectChat';
+import NotificationsPage from './pages/NotificationsPage'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
