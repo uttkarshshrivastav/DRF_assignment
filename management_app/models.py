@@ -182,6 +182,16 @@ class Tasks(models.Model):
     is_completed = models.BooleanField(
         default=False
     )
+    
+    completed_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+  
+    completion_image = models.BinaryField(
+        null=True,
+        blank=True
+    )
 
     created_at = models.DateTimeField(
         auto_now_add=True

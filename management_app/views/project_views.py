@@ -9,7 +9,8 @@ from rest_framework.permissions import (
 from ..models import (
     Users,
     Projects,
-    Members
+    Members,
+    Tasks
     
 )
 
@@ -372,3 +373,62 @@ class GetAllMembersView(APIView):
             },
             status=200
         )
+        
+        
+        
+class GetVersionHistoryView(APIView):
+    
+    authentication_classes = [
+        JWTAuthentication
+    ]
+
+    permission_classes = [
+        IsAuthenticated
+    ]
+
+    def get(self, request, project_id):
+
+        project_work = Tasks.objects.filter(
+            project_id=project_id,
+            is_completed=True
+        ).order_by('completed_at')  
+        if not project_work.exists():
+            return Response(
+                {
+                    "success": False,
+                    "message": "No completed tasks found"
+                },
+                status=404
+            )
+
+        data = []
+
+        for task in project_work:
+            data.append({
+                "id": task.id,
+                "title": task.title,
+                "description": task.description,
+                "completed_at": task.completed_at,
+                "completed_by": task.allotted_to.username,
+            })
+
+        return Response(
+            {
+                "success": True,
+                "tasks": data
+            },
+            status=200
+        )
+        
+            
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
