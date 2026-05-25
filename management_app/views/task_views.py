@@ -120,7 +120,7 @@ class GetTasksView(APIView):
 
     def get(self, request):
         project_id = request.query_params.get('project_id')
-        tasks = Tasks.objects.filter(project__id=project_id)
+        tasks = Tasks.objects.filter(project__id=project_id).order_by('deadline')
         print(project_id, tasks)
         task_data = []
 

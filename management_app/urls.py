@@ -12,6 +12,7 @@ from .views.project_views import (
     GetSingleProjectView,
     DeleteProjectView,
     AddMemberToProjectView,
+    GetAllMembersView,
 )
 from .views.task_views import (
     CreateTaskView,
@@ -59,6 +60,10 @@ urlpatterns = [
         path(
         'add_member_to_project/',
         AddMemberToProjectView.as_view()
+    ),
+        path(
+        'get_all_members/',
+        GetAllMembersView.as_view()    
     ),
         path(
         'create_task/',

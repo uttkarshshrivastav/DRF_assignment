@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import TaskCard from './TaskCard';
 
 export default function TaskList({ tasks, selectedTask, onSelectTask }) {
-  useEffect(()=>{
-    console.log(tasks)
-  },[])
+  // useEffect(()=>{
+  //   console.log(tasks)
+  // },[tasks])
+  
 
   if (!tasks || tasks.length === 0) {
     return (
