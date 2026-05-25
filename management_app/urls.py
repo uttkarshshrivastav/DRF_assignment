@@ -44,15 +44,15 @@ urlpatterns = [
         GetAllProjectsView.as_view()
     ),
         path(
-        'get_single_project/',
+        'get_single_project/<int:project_id>/',
         GetSingleProjectView.as_view()
     ),
         path(
-        'delete_project/',
+        'delete_project/<int:project_id>/',
             DeleteProjectView.as_view()
     ),
         path(
-        'add_member_to_project/',
+        'add_member_to_project/<int:project_id>/',
         AddMemberToProjectView.as_view()
     ),
 ]

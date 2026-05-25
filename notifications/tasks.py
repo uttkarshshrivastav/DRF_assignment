@@ -2,7 +2,8 @@ from celery import shared_task
 from django.utils import timezone
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from .models import DelayedReminder, Notification
+from management_app.models import Notifications
+from .models import DelayedReminder
 
 @shared_task
 def check_and_send_delayed_reminders():
@@ -14,9 +15,9 @@ def check_and_send_delayed_reminders():
     channel_layer = get_channel_layer()
 
     for reminder in pending_reminders:
-        notif = Notification.objects.create(
+        notif = Notifications.objects.create(
             user=reminder.user,
-            title="Task Reminder",
+            title="task_deadline",
             message=reminder.reminder_message
         )
 
