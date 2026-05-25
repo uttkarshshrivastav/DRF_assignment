@@ -13,7 +13,10 @@ from .views.project_views import (
     DeleteProjectView,
     AddMemberToProjectView,
     GetAllMembersView,
-    GetVersionHistoryView
+    GetVersionHistoryView,
+    ImageSaveView,
+    GetCompletedImageView
+    
     
 )
 
@@ -64,7 +67,16 @@ urlpatterns = [
         ),
         path(
             'get_version_history/',
-            
-        )
+            GetVersionHistoryView.as_view()  
+        ),
+        path(
+            'save_image/',
+            ImageSaveView.as_view()
+    ),
+        path(
+    'tasks/completion-image/<int:task_id>/',
+    GetCompletedImageView.as_view(),
+    name='completion-image'
+)
         
 ]

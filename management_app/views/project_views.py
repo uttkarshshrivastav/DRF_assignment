@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.http import HttpResponse
 
 from rest_framework.permissions import (
     IsAuthenticated
@@ -422,13 +423,90 @@ class GetVersionHistoryView(APIView):
         
             
         
+class ImageSaveView(APIView):
+
+    authentication_classes = [
+        JWTAuthentication
+    ]
+
+    permission_classes = [
+        IsAuthenticated
+    ]
+
+    def post(self, request, task_id):
+
+        try:
+            task = Tasks.objects.get(id=task_id)
+
+        except Tasks.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Task not found"
+                },
+                status=404
+            )
+
+        image = request.FILES.get("completion_image")
+
+        if not image:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Completion image is required"
+                },
+                status=400
+            )
+        image_binary = image.read()
+
+
+        task.completion_image = image_binary
+
+
+        task.save()
+
+        return Response(
+            {
+                "success": True,
+                "message": "image stored successfully",
+            },
+            status=200
+        )
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+
+
+class GetCompletedImageView(APIView):
+
+    authentication_classes = [
+        JWTAuthentication
+    ]
+
+    permission_classes = [
+        IsAuthenticated
+    ]
+
+    def get(self, request, task_id):
+
+        try:
+            task = Tasks.objects.get(id=task_id)
+
+        except Tasks.DoesNotExist:
+            return HttpResponse(
+                "Task not found",
+                status=404
+            )
+
+        if not task.completion_image:
+            return HttpResponse(
+                "No completion image found",
+                status=404
+            )
+            
+            
+        return HttpResponse(
+            task.completion_image,
+            content_type="image/jpeg"
+        )
+
+
