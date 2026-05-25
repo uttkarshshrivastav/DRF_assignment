@@ -32,15 +32,15 @@ class CreateProjectView(APIView):
 
         user = request.user
 
-        if not user.is_admin:
+        # if not user.is_admin:
 
-            return Response(
-                {
-                    "success": False,
-                    "message": "Only admins can create projects"
-                },
-                status=403
-            )
+        #     return Response(
+        #         {
+        #             "success": False,
+        #             "message": "Only admins can create projects"
+        #         },
+        #         status=403
+        #     )
 
         title = request.data.get(
             'title'
@@ -117,7 +117,9 @@ class GetAllProjectsView(APIView):
 
                 "created_by": project.created_by.username,
 
-                "created_at": project.created_at
+                "created_at": project.created_at,
+
+                "task_count": len(project.tasks.all())
             })
 
         return Response(
@@ -316,5 +318,59 @@ class AddMemberToProjectView(APIView):
             status=201
         )
         
-        
+       
+
+
+class GetAllMembersView(APIView):
     
+    authentication_classes = [
+        JWTAuthentication
+    ]
+
+    permission_classes = [
+        IsAuthenticated
+    ]
+    
+    def get(self,request,project_id):
+        
+        try:
+            project=Projects.objects.get(
+                id=project_id
+            )
+        except Projects.DoesNotExist:
+            return Response(
+                {
+                    "success":False,
+                    "message":"This project doesn't exist"
+                },
+                status=402
+            )
+            
+        members_all=[]
+        get_project=project.id
+        try:
+            members=Members.objects.filter(
+                project=get_project
+            )
+        except Members.DoesNotExist:
+            return Response(
+                {
+                    "success":False,
+                    "message":"no members exits for this project "
+                }
+            )
+        for member in members:
+            members_all.append({
+                "id": member.id,
+                "project":member.project.title,
+                "user":member.user.username,
+                "role":member.role,
+                "joined_at":member.joined_at
+            })
+        return Response(
+            {
+                "success":True,
+                "members":members_all
+            },
+            status=200
+        )
