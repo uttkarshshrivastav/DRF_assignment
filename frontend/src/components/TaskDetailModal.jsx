@@ -52,7 +52,7 @@ export default function TaskDetailModal({ task, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl w-full max-w-4xl h-[90vh] flex flex-col p-6 shadow-xl">
+      <div className="bg-white rounded-xl w-full max-w-4xl h-[60vh] flex flex-col p-6 shadow-xl">
         <div className="flex justify-between items-start mb-4 pb-4 border-b border-gray-200">
           <div>
             <h3 className="font-bold text-lg text-gray-900">{task.title}</h3>
@@ -88,18 +88,18 @@ export default function TaskDetailModal({ task, onClose }) {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto grid grid-cols-3 gap-4 mb-4">
-          <div className="col-span-2 space-y-4">
-            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+        <div className="flex-1 overflow-y-auto grid grid-cols-2 gap-4 mb-4">
+          <div className="col-span-1 space-y-4">
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm min-h-[70%]">
               <h4 className="font-bold text-gray-900 mb-2">Description</h4>
               <p className="text-sm text-gray-700">{task.description}</p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+            {/* <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <h4 className="font-bold text-gray-900 mb-3">Version History</h4>
               <div className="space-y-3">
                 ///////////// VERSION HISTORY
-                {/* {versions && versions.length > 0 ? (
+                {versions && versions.length > 0 ? (
                   versions.map((version, idx) => (
                     <div key={idx} className="border-l-4 border-gray-700 pl-4 py-2">
                       <div className="font-semibold text-sm text-gray-900">{version.version}</div>
@@ -125,9 +125,9 @@ export default function TaskDetailModal({ task, onClose }) {
                   ))
                 ) : (
                   <p className="text-sm text-gray-500">No versions yet</p>
-                )} */}
+                )}
               </div>
-            </div>
+            </div> */}
             {!is_completed &&(
               <div className='mt-10'>
                 <button className='btn bg-gray-300 hover:bg-gray-100 text-black' onClick={completeTask}>

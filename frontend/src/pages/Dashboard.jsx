@@ -9,6 +9,7 @@ import CreateTaskModal from '../components/CreateTaskModal';
 import { useNavigate } from 'react-router-dom';
 import TaskDetailModal from '../components/TaskDetailModal';
 import ProjectAdminPanel from '../components/ProjectAdminPanel';
+import VersionHistory from '../components/VersionHistory';
 
 export default function Dashboard() {
   const { user, isAuthenticated } = useAuth();
@@ -22,6 +23,7 @@ export default function Dashboard() {
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false)
+  const [showVersionHis, setShowVersionHis] = useState(false)
   const [users, setUsers] = useState([]);
   const [currProjMembers, setCurrProjMembers] = useState([])
 
@@ -91,12 +93,16 @@ export default function Dashboard() {
   };
 
   const calculateProgress = (project) => {
-    if (!project.tasks || project.tasks.length === 0) return 0;
-    const totalTasks = project.tasks.length;
-    const completedTasks = project.tasks.filter(
-      (t) => t.stage === 'DONE'
-    ).length;
-    return Math.round((completedTasks / totalTasks) * 100);
+    const stageWeights = {
+      'initialized': 0,
+      'draft': 20,
+      'review': 40,
+      'revision': 60,
+      'approved': 80,
+      'completed': 100
+    };
+
+    return stageWeights[project.stage]
   };
 
   const fetchTasks = async (projectId) => {
@@ -243,6 +249,12 @@ export default function Dashboard() {
                       </p>
                     </div>
                     <div>
+                      <button
+                        onClick={() => setShowVersionHis(true)}
+                        className="btn gap-2 mr-5"
+                      >
+                        Version History
+                      </button> 
                       {user.is_admin &&(
                         <button
                         onClick={() => setShowAdminPanel(true)}
@@ -330,6 +342,14 @@ export default function Dashboard() {
               users={users}
               addMemb={addMemb}
               refresh={fetchProjects}
+            />
+          )}
+          
+          {showVersionHis && (
+            <VersionHistory
+              project={selectedProject}
+              onClose={() => setShowVersionHis(false)}
+              tasks={tasks}
             />
           )}
 
