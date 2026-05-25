@@ -12,7 +12,9 @@ from .views.project_views import (
     GetSingleProjectView,
     DeleteProjectView,
     AddMemberToProjectView,
-    GetAllMembersView
+    GetAllMembersView,
+    GetVersionHistoryView
+    
 )
 
 urlpatterns = [
@@ -59,5 +61,10 @@ urlpatterns = [
         path(
         'get_all_members/',
         GetAllMembersView.as_view()    
+        ),
+        path(
+            'get_version_history/',
+            
         )
+        
 ]
