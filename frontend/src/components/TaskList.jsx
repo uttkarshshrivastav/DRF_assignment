@@ -5,7 +5,6 @@ export default function TaskList({ tasks, selectedTask, onSelectTask }) {
   // useEffect(()=>{
   //   console.log(tasks)
   // },[tasks])
-  
 
   if (!tasks || tasks.length === 0) {
     return (

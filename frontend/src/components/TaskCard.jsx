@@ -1,5 +1,10 @@
 
 export default function TaskCard({ task, isSelected, onSelect }) {
+  const priorityColors = {
+    LOW: 'bg-green-50 text-green-700 border border-green-200',
+    MEDIUM: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
+    HIGH: 'bg-red-50 text-red-700 border border-red-200',
+  };
 
   const isOverdue =
     task.deadline &&
@@ -15,7 +20,7 @@ export default function TaskCard({ task, isSelected, onSelect }) {
         }`}
     >
       <div className="flex justify-between items-start mb-3">
-        <div className="px-2 py-0.5 text-xs font-semibold rounded bg-gray-100 text-gray-700 border border-gray-200">
+        <div className={`px-2 py-0.5 text-xs font-semibold rounded ` + priorityColors[task.priority]}>
           {task.priority}
         </div>
         {isOverdue && (

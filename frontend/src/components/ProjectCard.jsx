@@ -1,13 +1,5 @@
 
 export default function ProjectCard({ project, progress, isSelected, onSelect }) {
-  const stageColors = {
-    draft: 'badge-info',
-    review: 'badge-warning',
-    revision: 'badge-secondary',
-    approved: 'badge-success',
-    completed: 'badge-success',
-    archived: 'badge-ghost',
-  };
 
 
   return (
@@ -29,11 +21,11 @@ export default function ProjectCard({ project, progress, isSelected, onSelect })
         </p>
 
         <div className="flex items-center justify-between mb-4">
-          <div className={`badge ${stageColors[project.stage] || 'badge-default'}`}>
+          <div className='badge-default'>
             {project.stage.toUpperCase()}
           </div>
           <span className="text-xs text-gray-700">
-            {project.tasks?.length || 0} tasks
+            {project.task_count || 0} tasks
           </span>
         </div>
 

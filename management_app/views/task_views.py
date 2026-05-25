@@ -141,6 +141,12 @@ class GetTasksView(APIView):
                 # "tags":task.tags
             
             })
+        
+        prio_dict = {'LOW': 3, 'MEDIUM': 2, 'HIGH': 1}
+        task_data = sorted(
+            task_data, 
+            key=lambda task: prio_dict[task["priority"]]
+        )
 
         return Response(
             {

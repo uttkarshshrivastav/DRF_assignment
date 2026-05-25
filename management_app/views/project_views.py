@@ -117,7 +117,9 @@ class GetAllProjectsView(APIView):
 
                 "created_by": project.created_by.username,
 
-                "created_at": project.created_at
+                "created_at": project.created_at,
+
+                "task_count": len(project.tasks.all())
             })
 
         return Response(
