@@ -22,36 +22,32 @@ export default function Dashboard() {
   const [error, setError] = useState('');
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
-  const [showAdminPanel, setShowAdminPanel] = useState(false)
-  const [showVersionHis, setShowVersionHis] = useState(false)
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [showVersionHis, setShowVersionHis] = useState(false);
   const [users, setUsers] = useState([]);
-  const [currProjMembers, setCurrProjMembers] = useState([])
+  const [currProjMembers, setCurrProjMembers] = useState([]);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/login")
+      navigate("/login");
     }
-  }, [isAuthenticated, navigate])
+  }, [isAuthenticated, navigate]);
 
   useEffect(() => {
     fetchProjects();
   }, []);
 
-  useEffect(()=>{
-    const get_users = async ()=>{
+  useEffect(() => {
+    const get_users = async () => {
       try {
         const response = await client.get('/get_all_users/');
-
-        console.log(response.data.users)
-        setUsers(response.data.users)
-  
+        setUsers(response.data.users);
       } catch (err) {
-        console.error('Failed to fetch tasks:', err);
-        return null
+        return null;
       }
-    }
-    get_users()
-  }, [])
+    };
+    get_users();
+  }, []);
 
   useEffect(() => {
     if (selectedProject) {
@@ -61,26 +57,25 @@ export default function Dashboard() {
 
   const toggleSelectedProject = (project) => {
     if (selectedProject === project) {
-      setCurrProjMembers([])
-      setSelectedProject(null)
+      setCurrProjMembers([]);
+      setSelectedProject(null);
     } else {
-      fetchMembers(project.id, setCurrProjMembers)
-      setSelectedProject(project)
+      fetchMembers(project.id, setCurrProjMembers);
+      setSelectedProject(project);
     }
-  }
+  };
+
   const fetchProjects = async () => {
     try {
       setLoading(true);
       setError('');
       const response = await client.get('/get_all_projects/');
-      console.log(response.data.projects, user)
       setProjects(response.data.projects);
       if (response.data.length > 0) {
         setSelectedProject(response.data[0]);
       }
     } catch (err) {
       setError('Failed to fetch projects');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -89,7 +84,7 @@ export default function Dashboard() {
   const handleProjectCreated = (newProject) => {
     setProjects([...projects, newProject]);
     setShowProjectModal(false);
-    setSelectedProject(newProject)
+    setSelectedProject(newProject);
   };
 
   const calculateProgress = (project) => {
@@ -101,8 +96,7 @@ export default function Dashboard() {
       'approved': 80,
       'completed': 100
     };
-
-    return stageWeights[project.stage]
+    return stageWeights[project.stage];
   };
 
   const fetchTasks = async (projectId) => {
@@ -111,20 +105,16 @@ export default function Dashboard() {
         params: { project_id: projectId },
       });
       setTasks(response.data.tasks);
-      console.log(tasks)
       if (response.data.length > 0) {
         setSelectedTask(response.data[0]);
       }
     } catch (err) {
-      console.error('Failed to fetch tasks:', err);
       setTasks([]);
     }
   };
 
   const handleTaskCreated = (newTask) => {
-    console.log(tasks)
     setTasks([...tasks, newTask]);
-    console.log(tasks)
     setShowTaskModal(false);
   };
 
@@ -133,33 +123,38 @@ export default function Dashboard() {
       const response = await client.get('/get_all_members/', {
         params: { project_id: projectId },
       });
-
-      console.log("Members", projectId, response.data.members)
-      setfn(response.data.members)
-      
-
+      setfn(response.data.members);
     } catch (err) {
-      console.error('Failed to fetch tasks:', err);
-      return null
+      return null;
     }
-  }
+  };
 
   const addMemb = (member) => {
-    setCurrProjMembers([...currProjMembers, member])
-  }
-
-  // const editProjStage = (project) => {
-  //   set
-  // }
-
+    setCurrProjMembers([...currProjMembers, member]);
+  };
 
   return (
     <Layout>
       <div className="min-h-screen bg-gray-200">
         <div className="bg-gray-500 text-white p-8 shadow-lg">
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-4xl font-bold mb-2">Super Studios Project Manager</h1>
-            <p className="text-indigo-100">Welcome, {user?.alias}!</p>
+          <div className="max-w-7xl mx-auto flex justify-between items-center">
+            <div>
+              <h1 className="text-4xl font-bold mb-2">Super Studios Project Manager</h1>
+              <p className="text-indigo-100">Welcome, {user?.alias}!</p>
+            </div>
+            
+            <div className="flex gap-4">
+              <button 
+                onClick={() => navigate('/notifications')}
+                className="btn gap-2"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                </svg>
+                Notifications
+              </button>
+            </div>
+            
           </div>
         </div>
 
@@ -249,6 +244,17 @@ export default function Dashboard() {
                       </p>
                     </div>
                     <div>
+                      
+                      <button
+                        onClick={() => navigate(`/project/${selectedProject.id}/chat`)}
+                        className="btn gap-2 mr-5"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                        </svg>
+                        Project Chat
+                      </button>
+
                       <button
                         onClick={() => setShowVersionHis(true)}
                         className="btn gap-2 mr-5"

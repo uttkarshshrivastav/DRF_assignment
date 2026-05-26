@@ -145,14 +145,13 @@ export default function TaskDetailModal({ task, onClose }) {
                 )}
               </div>
             </div> */}
+
             {!is_completed &&(
               <div className='mt-10'>
                 <button className='btn bg-gray-300 hover:bg-gray-100 text-black' onClick={completeTask}>
                   Complete
                 </button>
-
               </div>
-
             )}
           </div>
 
