@@ -104,6 +104,8 @@ To run the full stack locally, you will need **three active terminal tabs**.
     npm run dev
 
 ---
+##video Drive Link
+https://drive.google.com/drive/folders/15chVjsG1TuaCWf8vrbZQA_bcNd6WZBs5
 
 ## System Architecture (Models)
 
